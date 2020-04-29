@@ -3,7 +3,7 @@
 var should = require('chai').should();
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
-var DashService = require('../../lib/services/dashd');
+var DashService = require('../../lib/services/pacglobald');
 var index = require('../../lib');
 var log = index.log;
 
@@ -19,7 +19,7 @@ describe('#start', function() {
 
   describe('will dynamically create a node from a configuration', function() {
 
-    it('require each dashcore-node service with default config', function(done) {
+    it('require each pacglobal-node service with default config', function(done) {
       var node;
       var TestNode = function(options) {
         options.services[0].should.deep.equal({
@@ -87,7 +87,7 @@ describe('#start', function() {
         done();
       });
     });
-    it('require each dashcore-node service with explicit config', function(done) {
+    it('require each pacglobal-node service with explicit config', function(done) {
       var node;
       var TestNode = function(options) {
         options.services[0].should.deep.equal({

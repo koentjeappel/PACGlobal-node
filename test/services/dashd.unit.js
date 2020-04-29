@@ -5,8 +5,8 @@ var path = require('path');
 var EventEmitter = require('events').EventEmitter;
 var should = require('chai').should();
 var crypto = require('crypto');
-var dashcore = require('@dashevo/dashcore-lib');
-var _ = dashcore.deps._;
+var pacglobal = require('pacglobal-lib');
+var _ = pacglobal.deps._;
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var fs = require('fs');
@@ -16,9 +16,9 @@ var index = require('../../lib');
 var log = index.log;
 var errors = index.errors;
 
-var Transaction = dashcore.Transaction;
+var Transaction = pacglobal.Transaction;
 var readFileSync = sinon.stub().returns(fs.readFileSync(path.resolve(__dirname, '../data/dash.conf')));
-var DashService = proxyquire('../../lib/services/dashd', {
+var DashService = proxyquire('../../lib/services/pacglobald', {
   fs: {
     readFileSync: readFileSync
   }
@@ -30,7 +30,7 @@ describe('Dash Service', function() {
 
   var baseConfig = {
     node: {
-      network: dashcore.Networks.testnet
+      network: pacglobal.Networks.testnet
     },
     spawn: {
       datadir: 'testdir',
@@ -371,7 +371,7 @@ describe('Dash Service', function() {
       sandbox.restore();
     });
     it('will parse a dash.conf file', function() {
-      var TestDash = proxyquire('../../lib/services/dashd', {
+      var TestDash = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync,
           existsSync: sinon.stub().returns(true),
@@ -408,7 +408,7 @@ describe('Dash Service', function() {
       });
     });
     it('will expand relative datadir to absolute path', function() {
-      var TestDash = proxyquire('../../lib/services/dashd', {
+      var TestDash = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync,
           existsSync: sinon.stub().returns(true),
@@ -420,8 +420,8 @@ describe('Dash Service', function() {
       });
       var config = {
         node: {
-          network: dashcore.Networks.testnet,
-          configPath: '/tmp/.dashcore/dashcore-node.json'
+          network: pacglobal.Networks.testnet,
+          configPath: '/tmp/.PACGlobal/pacglobal-node.json'
         },
         spawn: {
           datadir: './data',
@@ -432,10 +432,10 @@ describe('Dash Service', function() {
       dashd.options.spawn.datadir = './data';
       var node = {};
       dashd._loadSpawnConfiguration(node);
-      dashd.options.spawn.datadir.should.equal('/tmp/.dashcore/data');
+      dashd.options.spawn.datadir.should.equal('/tmp/.PACGlobal/data');
     });
     it('should throw an exception if txindex isn\'t enabled in the configuration', function() {
-      var TestDash = proxyquire('../../lib/services/dashd', {
+      var TestDash = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: sinon.stub().returns(fs.readFileSync(__dirname + '/../data/baddash.conf')),
           existsSync: sinon.stub().returns(true),
@@ -447,13 +447,13 @@ describe('Dash Service', function() {
       var dashd = new TestDash(baseConfig);
       (function() {
         dashd._loadSpawnConfiguration({datadir: './test'});
-      }).should.throw(dashcore.errors.InvalidState);
+      }).should.throw(pacglobal.errors.InvalidState);
     });
     it('should NOT set https options if node https options are set', function() {
       var writeFileSync = function(path, config) {
         config.should.equal(defaultDashConf);
       };
-      var TestDash = proxyquire('../../lib/services/dashd', {
+      var TestDash = proxyquire('../../lib/services/pacglobald', {
         fs: {
           writeFileSync: writeFileSync,
           readFileSync: readFileSync,
@@ -771,13 +771,13 @@ describe('Dash Service', function() {
 
   describe('#_getDefaultConf', function() {
     afterEach(function() {
-      dashcore.Networks.disableRegtest();
-      baseConfig.node.network = dashcore.Networks.testnet;
+      pacglobal.Networks.disableRegtest();
+      baseConfig.node.network = pacglobal.Networks.testnet;
     });
     it('will get default rpc port for livenet', function() {
       var config = {
         node: {
-          network: dashcore.Networks.livenet
+          network: pacglobal.Networks.livenet
         },
         spawn: {
           datadir: 'testdir',
@@ -790,7 +790,7 @@ describe('Dash Service', function() {
     it('will get default rpc port for testnet', function() {
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -801,10 +801,10 @@ describe('Dash Service', function() {
       dashd._getDefaultConf().rpcport.should.equal(19998);
     });
     it('will get default rpc port for regtest', function() {
-      dashcore.Networks.enableRegtest();
+      pacglobal.Networks.enableRegtest();
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -818,13 +818,13 @@ describe('Dash Service', function() {
 
   describe('#_getNetworkConfigPath', function() {
     afterEach(function() {
-      dashcore.Networks.disableRegtest();
-      baseConfig.node.network = dashcore.Networks.testnet;
+      pacglobal.Networks.disableRegtest();
+      baseConfig.node.network = pacglobal.Networks.testnet;
     });
     it('will get default config path for livenet', function() {
       var config = {
         node: {
-          network: dashcore.Networks.livenet
+          network: pacglobal.Networks.livenet
         },
         spawn: {
           datadir: 'testdir',
@@ -837,7 +837,7 @@ describe('Dash Service', function() {
     it('will get default rpc port for testnet', function() {
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -848,10 +848,10 @@ describe('Dash Service', function() {
       dashd._getNetworkConfigPath().should.equal('testnet3/dash.conf');
     });
     it('will get default rpc port for regtest', function() {
-      dashcore.Networks.enableRegtest();
+      pacglobal.Networks.enableRegtest();
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -865,24 +865,24 @@ describe('Dash Service', function() {
 
   describe('#_getNetworkOption', function() {
     afterEach(function() {
-      dashcore.Networks.disableRegtest();
-      baseConfig.node.network = dashcore.Networks.testnet;
+      pacglobal.Networks.disableRegtest();
+      baseConfig.node.network = pacglobal.Networks.testnet;
     });
     it('return --testnet for testnet', function() {
       var dashd = new DashService(baseConfig);
-      dashd.node.network = dashcore.Networks.testnet;
+      dashd.node.network = pacglobal.Networks.testnet;
       dashd._getNetworkOption().should.equal('--testnet');
     });
     it('return --regtest for testnet', function() {
       var dashd = new DashService(baseConfig);
-      dashd.node.network = dashcore.Networks.testnet;
-      dashcore.Networks.enableRegtest();
+      dashd.node.network = pacglobal.Networks.testnet;
+      pacglobal.Networks.enableRegtest();
       dashd._getNetworkOption().should.equal('--regtest');
     });
     it('return undefined for livenet', function() {
       var dashd = new DashService(baseConfig);
-      dashd.node.network = dashcore.Networks.livenet;
-      dashcore.Networks.enableRegtest();
+      dashd.node.network = pacglobal.Networks.livenet;
+      pacglobal.Networks.enableRegtest();
       should.equal(dashd._getNetworkOption(), undefined);
     });
   });
@@ -1073,7 +1073,7 @@ describe('Dash Service', function() {
     it('will not call syncPercentage if node is stopping', function(done) {
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -1102,17 +1102,17 @@ describe('Dash Service', function() {
   });
 
   describe('#_getAddressesFromTransaction', function() {
-    it('will get results using dashcore.Transaction', function() {
+    it('will get results using pacglobal.Transaction', function() {
       var dashd = new DashService(baseConfig);
       var wif = 'XGLgPK8gbmzU7jcbw34Pj55AXV7SmG6carKuiwtu4WtvTjyTbpwX';
-      var privkey = dashcore.PrivateKey.fromWIF(wif);
-      var inputAddress = privkey.toAddress(dashcore.Networks.testnet);
-      var outputAddress = dashcore.Address('8oUSpiq5REeEKAzS1qSXoJbZ9TRfH1L6mi');
-      var tx = dashcore.Transaction();
+      var privkey = pacglobal.PrivateKey.fromWIF(wif);
+      var inputAddress = privkey.toAddress(pacglobal.Networks.testnet);
+      var outputAddress = pacglobal.Address('8oUSpiq5REeEKAzS1qSXoJbZ9TRfH1L6mi');
+      var tx = pacglobal.Transaction();
       tx.from({
         txid: '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
         outputIndex: 0,
-        script: dashcore.Script(inputAddress),
+        script: pacglobal.Script(inputAddress),
         address: inputAddress.toString(),
         satoshis: 5000000000
       });
@@ -1125,18 +1125,18 @@ describe('Dash Service', function() {
     });
     it('will handle non-standard script types', function() {
       var dashd = new DashService(baseConfig);
-      var tx = dashcore.Transaction();
-      tx.addInput(dashcore.Transaction.Input({
+      var tx = pacglobal.Transaction();
+      tx.addInput(pacglobal.Transaction.Input({
         prevTxId: '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-        script: dashcore.Script('OP_TRUE'),
+        script: pacglobal.Script('OP_TRUE'),
         outputIndex: 1,
         output: {
-          script: dashcore.Script('OP_TRUE'),
+          script: pacglobal.Script('OP_TRUE'),
           satoshis: 5000000000
         }
       }));
-      tx.addOutput(dashcore.Transaction.Output({
-        script: dashcore.Script('OP_TRUE'),
+      tx.addOutput(pacglobal.Transaction.Output({
+        script: pacglobal.Script('OP_TRUE'),
         satoshis: 5000000000
       }));
       var addresses = dashd._getAddressesFromTransaction(tx);
@@ -1144,8 +1144,8 @@ describe('Dash Service', function() {
     });
     it('will handle unparsable script types or missing input script', function() {
       var dashd = new DashService(baseConfig);
-      var tx = dashcore.Transaction();
-      tx.addOutput(dashcore.Transaction.Output({
+      var tx = pacglobal.Transaction();
+      tx.addOutput(pacglobal.Transaction.Output({
         script: new Buffer('4c', 'hex'),
         satoshis: 5000000000
       }));
@@ -1154,14 +1154,14 @@ describe('Dash Service', function() {
     });
     it('will return unique values', function() {
       var dashd = new DashService(baseConfig);
-      var tx = dashcore.Transaction();
-      var address = dashcore.Address('8oUSpiq5REeEKAzS1qSXoJbZ9TRfH1L6mi');
-      tx.addOutput(dashcore.Transaction.Output({
-        script: dashcore.Script(address),
+      var tx = pacglobal.Transaction();
+      var address = pacglobal.Address('8oUSpiq5REeEKAzS1qSXoJbZ9TRfH1L6mi');
+      tx.addOutput(pacglobal.Transaction.Output({
+        script: pacglobal.Script(address),
         satoshis: 5000000000
       }));
-      tx.addOutput(dashcore.Transaction.Output({
-        script: dashcore.Script(address),
+      tx.addOutput(pacglobal.Transaction.Output({
+        script: pacglobal.Script(address),
         satoshis: 5000000000
       }));
       var addresses = dashd._getAddressesFromTransaction(tx);
@@ -1355,7 +1355,7 @@ describe('Dash Service', function() {
     it('it will clear interval if node is stopping', function(done) {
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -1484,7 +1484,7 @@ describe('Dash Service', function() {
       var socketFunc = function() {
         return socket;
       };
-      var DashService = proxyquire('../../lib/services/dashd', {
+      var DashService = proxyquire('../../lib/services/pacglobald', {
         zeromq: {
           socket: socketFunc
         }
@@ -1657,7 +1657,7 @@ describe('Dash Service', function() {
       var error = new Error('Test error');
       error.code = 'ENOENT';
       readFile.onCall(1).callsArgWith(2, error);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFile: readFile
         }
@@ -1681,7 +1681,7 @@ describe('Dash Service', function() {
       var error = new Error('Test error');
       error.code = 'ENOENT';
       readFile.onCall(1).callsArgWith(2, error);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFile: readFile
         }
@@ -1704,7 +1704,7 @@ describe('Dash Service', function() {
     it('it will attempt to kill process with NaN', function(done) {
       var readFile = sandbox.stub();
       readFile.onCall(0).callsArgWith(2, null, '     ');
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFile: readFile
         }
@@ -1773,7 +1773,7 @@ describe('Dash Service', function() {
     it('will exit spawn if shutdown', function() {
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -1782,7 +1782,7 @@ describe('Dash Service', function() {
       };
       var process = new EventEmitter();
       var spawn = sinon.stub().returns(process);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync
         },
@@ -1855,7 +1855,7 @@ describe('Dash Service', function() {
     it('will respawn dashd spawned process', function(done) {
       var process = new EventEmitter();
       var spawn = sinon.stub().returns(process);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync
         },
@@ -1893,7 +1893,7 @@ describe('Dash Service', function() {
     it('will emit error during respawn', function(done) {
       var process = new EventEmitter();
       var spawn = sinon.stub().returns(process);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync
         },
@@ -1931,7 +1931,7 @@ describe('Dash Service', function() {
     it('will NOT respawn dashd spawned process if shutting down', function(done) {
       var process = new EventEmitter();
       var spawn = sinon.stub().returns(process);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync
         },
@@ -1941,7 +1941,7 @@ describe('Dash Service', function() {
       });
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -1979,7 +1979,7 @@ describe('Dash Service', function() {
     it('will give error after 60 retries', function(done) {
       var process = new EventEmitter();
       var spawn = sinon.stub().returns(process);
-      var TestDashService = proxyquire('../../lib/services/dashd', {
+      var TestDashService = proxyquire('../../lib/services/pacglobald', {
         fs: {
           readFileSync: readFileSync
         },
@@ -2048,7 +2048,7 @@ describe('Dash Service', function() {
     it('will give error if connecting while shutting down', function(done) {
       var config = {
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         },
         spawn: {
           datadir: 'testdir',
@@ -3373,10 +3373,10 @@ describe('Dash Service', function() {
   });
 
   describe('#_getAddressStrings', function() {
-    it('will get address strings from dashcore addresses', function() {
+    it('will get address strings from pacglobal addresses', function() {
       var addresses = [
-        dashcore.Address('XjxDQFjTNEP9dcrJhBLvy5i1Dobz4x1LJN'),
-        dashcore.Address('7d5169eBcGHF4BYC6DTffTyeCpWbrZnNgz'),
+        pacglobal.Address('XjxDQFjTNEP9dcrJhBLvy5i1Dobz4x1LJN'),
+        pacglobal.Address('7d5169eBcGHF4BYC6DTffTyeCpWbrZnNgz'),
       ];
       var dashd = new DashService(baseConfig);
       var strings = dashd._getAddressStrings(addresses);
@@ -3395,7 +3395,7 @@ describe('Dash Service', function() {
     });
     it('will get address strings from mixture of types', function() {
       var addresses = [
-        dashcore.Address('XjxDQFjTNEP9dcrJhBLvy5i1Dobz4x1LJN'),
+        pacglobal.Address('XjxDQFjTNEP9dcrJhBLvy5i1Dobz4x1LJN'),
         '7d5169eBcGHF4BYC6DTffTyeCpWbrZnNgz',
       ];
       var dashd = new DashService(baseConfig);
@@ -3405,7 +3405,7 @@ describe('Dash Service', function() {
     });
     it('will give error with unknown', function() {
       var addresses = [
-        dashcore.Address('XjxDQFjTNEP9dcrJhBLvy5i1Dobz4x1LJN'),
+        pacglobal.Address('XjxDQFjTNEP9dcrJhBLvy5i1Dobz4x1LJN'),
         0,
       ];
       var dashd = new DashService(baseConfig);
@@ -3912,7 +3912,7 @@ describe('Dash Service', function() {
         done();
       });
     });
-    it('will getblock as dashcore object from height', function(done) {
+    it('will getblock as pacglobal object from height', function(done) {
       var dashd = new DashService(baseConfig);
       var getBlock = sinon.stub().callsArgWith(2, null, {
         result: blockhex
@@ -3930,11 +3930,11 @@ describe('Dash Service', function() {
         should.not.exist(err);
         getBlock.args[0][0].should.equal('00000000050a6d07f583beba2d803296eb1e9d4980c4a20f206c584e89a4f02b');
         getBlock.args[0][1].should.equal(false);
-        block.should.be.instanceof(dashcore.Block);
+        block.should.be.instanceof(pacglobal.Block);
         done();
       });
     });
-    it('will getblock as dashcore object', function(done) {
+    it('will getblock as pacglobal object', function(done) {
       var dashd = new DashService(baseConfig);
       var getBlock = sinon.stub().callsArgWith(2, null, {
         result: blockhex
@@ -3952,7 +3952,7 @@ describe('Dash Service', function() {
         getBlock.callCount.should.equal(1);
         getBlock.args[0][0].should.equal('00000000050a6d07f583beba2d803296eb1e9d4980c4a20f206c584e89a4f02b');
         getBlock.args[0][1].should.equal(false);
-        block.should.be.instanceof(dashcore.Block);
+        block.should.be.instanceof(pacglobal.Block);
         done();
       });
     });
@@ -3973,12 +3973,12 @@ describe('Dash Service', function() {
         should.not.exist(err);
         getBlockHash.callCount.should.equal(0);
         getBlock.callCount.should.equal(1);
-        block.should.be.instanceof(dashcore.Block);
+        block.should.be.instanceof(pacglobal.Block);
         dashd.getBlock(hash, function(err, block) {
           should.not.exist(err);
           getBlockHash.callCount.should.equal(0);
           getBlock.callCount.should.equal(1);
-          block.should.be.instanceof(dashcore.Block);
+          block.should.be.instanceof(pacglobal.Block);
           done();
         });
       });
@@ -4001,12 +4001,12 @@ describe('Dash Service', function() {
         should.not.exist(err);
         getBlockHash.callCount.should.equal(1);
         getBlock.callCount.should.equal(1);
-        block.should.be.instanceof(dashcore.Block);
+        block.should.be.instanceof(pacglobal.Block);
         dashd.getBlock(0, function(err, block) {
           should.not.exist(err);
           getBlockHash.callCount.should.equal(2);
           getBlock.callCount.should.equal(1);
-          block.should.be.instanceof(dashcore.Block);
+          block.should.be.instanceof(pacglobal.Block);
           done();
         });
       });
@@ -4547,7 +4547,7 @@ describe('Dash Service', function() {
   });
 
   describe('#sendTransaction', function(done) {
-    var tx = dashcore.Transaction(txhex);
+    var tx = pacglobal.Transaction(txhex);
     it('will give rpc error', function() {
       var dashd = new DashService(baseConfig);
       var sendRawTransaction = sinon.stub().callsArgWith(3, {message: 'error', code: -1});
@@ -4605,7 +4605,7 @@ describe('Dash Service', function() {
           sendRawTransaction: sendRawTransaction
         }
       });
-      var transaction = dashcore.Transaction();
+      var transaction = pacglobal.Transaction();
       (function() {
         dashd.sendTransaction(transaction);
       }).should.throw(Error);
@@ -4727,7 +4727,7 @@ describe('Dash Service', function() {
           return done(err);
         }
         should.exist(tx);
-        tx.should.be.an.instanceof(dashcore.Transaction);
+        tx.should.be.an.instanceof(pacglobal.Transaction);
         done();
       });
     });
@@ -4746,11 +4746,11 @@ describe('Dash Service', function() {
           return done(err);
         }
         should.exist(tx);
-        tx.should.be.an.instanceof(dashcore.Transaction);
+        tx.should.be.an.instanceof(pacglobal.Transaction);
 
         dashd.getTransaction('txid', function(err, tx) {
           should.exist(tx);
-          tx.should.be.an.instanceof(dashcore.Transaction);
+          tx.should.be.an.instanceof(pacglobal.Transaction);
           getRawTransaction.callCount.should.equal(1);
           done();
         });

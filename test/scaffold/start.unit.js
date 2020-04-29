@@ -18,7 +18,7 @@ describe('#start', function() {
     });
     it('will give true with "datadir" at root', function() {
       var checkConfigVersion2 = proxyquire('../../lib/scaffold/start', {}).checkConfigVersion2;
-      var v2 = checkConfigVersion2({datadir: '/home/user/.dashcore/data', services: []});
+      var v2 = checkConfigVersion2({datadir: '/home/user/.PACGlobal/data', services: []});
       v2.should.equal(true);
     });
     it('will give true with "address" service enabled', function() {
@@ -87,7 +87,7 @@ describe('#start', function() {
       services[0].name.should.equal('local');
       services[0].module.should.equal(LocalService);
     });
-    it('will require a local module with "dashcoreNode" in package.json', function() {
+    it('will require a local module with "pacglobalNode" in package.json', function() {
       function LocalService() {}
       LocalService.dependencies = [];
       LocalService.prototype.start = sinon.stub();
@@ -99,9 +99,9 @@ describe('#start', function() {
         } else if (p === 'local/package.json') {
           return {
             name: 'local',
-            dashcoreNode: 'lib/dashcoreNode.js'
+            pacglobalNode: 'lib/pacglobalNode.js'
           };
-        } else if (p === 'local/lib/dashcoreNode.js') {
+        } else if (p === 'local/lib/pacglobalNode.js') {
           return LocalService;
         }
       };
