@@ -20,7 +20,7 @@ describe('#defaultConfig', function() {
         dashd: {
           connect: [{
             rpchost: '127.0.0.1',
-            rpcport: 7112,
+            rpcport: 7111,
             rpcuser: 'koenpeters',
             rpcpassword: 'koenislekker',
             zmqpubrawtx: 'tcp://127.0.0.1:28332'
@@ -66,7 +66,7 @@ describe('#defaultConfig', function() {
         dashd: {
           connect: [{
             rpchost: '127.0.0.1',
-            rpcport: 7112,
+            rpcport: 7111,
             rpcuser: 'koenpeters',
             rpcpassword: 'koenislekker',
             zmqpubrawtx: 'tcp://127.0.0.1:28332'
