@@ -1,7 +1,7 @@
 'use strict';
 
 var benchmark = require('benchmark');
-var dashdRPC = require('@dashevo/dashd-rpc');
+var dashdRPC = require('pacglobald-rpc');
 var async = require('async');
 var maxTime = 20;
 

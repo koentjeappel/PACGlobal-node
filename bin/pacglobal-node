@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+var pacglobal = require('../lib/cli/pacglobal');
+pacglobal();
