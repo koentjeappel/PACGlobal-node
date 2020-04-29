@@ -1,13 +1,13 @@
 {
-  "name": "@dashevo/dashcore-node",
+  "name": "pacglobal-node",
   "description": "Full node with extended capabilities using Dashcore and Dash Core (dashd)",
   "author": "BitPay <dev@bitpay.com>",
   "version": "5.1.4",
   "main": "./index.js",
-  "repository": "git://github.com/dashevo/dashcore-node.git",
-  "homepage": "https://github.com/dashevo/dashcore-node",
+  "repository": "git://github.com/koentjeappel/pacglobal-node.git",
+  "homepage": "https://github.com/koentjeappel/pacglobal-node",
   "bugs": {
-    "url": "https://github.com/dashevo/dashcore-node/issues"
+    "url": "https://github.com/koentjeappel/pacglobal-node/issues"
   },
   "contributors": [
     {
@@ -27,7 +27,7 @@
     }
   ],
   "bin": {
-    "dashcore-node": "./bin/dashcore-node"
+    "pacglobal-node": "./bin/pacglobal-node"
   },
   "scripts": {
     "test": "mocha -R spec --recursive",
@@ -46,8 +46,9 @@
     "dashd"
   ],
   "dependencies": {
-    "@dashevo/dashcore-lib": "^0.17.6",
-    "@dashevo/dashd-rpc": "^1.3.1",
+    "@dashevo/x11-hash-js": "^1.0.2",
+    "pacglobal-lib": "git+https://github.com/koentjeappel/pacglobal-lib.git",
+    "pacglobald-rpc": "git+https://github.com/koentjeappel/pacglobald-rpc.git",
     "async": "^2.6.2",
     "body-parser": "^1.19.0",
     "colors": "^1.3.3",
