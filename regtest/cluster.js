@@ -4,9 +4,9 @@ var path = require('path');
 var async = require('async');
 var spawn = require('child_process').spawn;
 
-var DashdRPC = require('@dashevo/dashd-rpc');
+var DashdRPC = require('pacglobald-rpc');
 var rimraf = require('rimraf');
-var dashcore = require('@dashevo/dashcore-lib');
+var dashcore = require('pacglobal-lib');
 var chai = require('chai');
 var should = chai.should();
 
@@ -19,7 +19,7 @@ var DashService = index.services.Dash;
 describe('Dash Cluster', function() {
   var node;
   var daemons = [];
-  var execPath = path.resolve(__dirname, process.env.HOME, './.dashcore/data/dashd')
+  var execPath = path.resolve(__dirname, process.env.HOME, './.PACGlobal/data/dashd')
   var nodesConf = [
     {
       datadir: path.resolve(__dirname, './data/node1'),
@@ -133,7 +133,7 @@ describe('Dash Cluster', function() {
       ]
     };
 
-    var regtest = dashcore.Networks.get('regtest');
+    var regtest = pacglobal.Networks.get('regtest');
     should.exist(regtest);
 
     node = new DashcoreNode(configuration);

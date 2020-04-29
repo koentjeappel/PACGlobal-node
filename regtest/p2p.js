@@ -6,13 +6,13 @@ var path = require('path');
 var index = require('..');
 var log = index.log;
 
-var p2p = require('@dashevo/dashcore-p2p');
+var p2p = require('pacglobal-p2p');
 var Peer = p2p.Peer;
 var Messages = p2p.Messages;
 var chai = require('chai');
-var dashcore = require('@dashevo/dashcore-lib');
-var Transaction = dashcore.Transaction;
-var BN = dashcore.crypto.BN;
+var pacglobal = require('pacglobal-lib');
+var Transaction = pacglobal.Transaction;
+var BN = pacglobal.crypto.BN;
 var async = require('async');
 var rimraf = require('rimraf');
 var dashd;
@@ -21,7 +21,7 @@ var dashd;
 var should = chai.should();
 var assert = chai.assert;
 var sinon = require('sinon');
-var DashdRPC = require('@dashevo/dashd-rpc');
+var DashdRPC = require('pacglobald-rpc');
 var transactionData = [];
 var blockHashes = [];
 var txs = [];
@@ -29,9 +29,9 @@ var client;
 var messages;
 var peer;
 var coinbasePrivateKey;
-var privateKey = dashcore.PrivateKey();
-var destKey = dashcore.PrivateKey();
-var BufferUtil = dashcore.util.buffer;
+var privateKey = pacglobal.PrivateKey();
+var destKey = pacglobal.PrivateKey();
+var BufferUtil = pacglobal.util.buffer;
 var blocks;
 
 describe('P2P Functionality', function() {
@@ -40,8 +40,8 @@ describe('P2P Functionality', function() {
     this.timeout(200000);
 
     // enable regtest
-    dashcore.Networks.enableRegtest();
-    var regtestNetwork = dashcore.Networks.get('regtest');
+    pacglobal.Networks.enableRegtest();
+    var regtestNetwork = pacglobal.Networks.get('regtest');
     var datadir = __dirname + '/data';
 
     rimraf(datadir + '/regtest', function(err) {
@@ -52,10 +52,10 @@ describe('P2P Functionality', function() {
       dashd = require('../').services.Dash({
         spawn: {
           datadir: datadir,
-          exec: path.resolve(__dirname, process.env.HOME, './.dashcore/data/dashd')
+          exec: path.resolve(__dirname, process.env.HOME, './.PACGlobal/data/dashd')
         },
         node: {
-          network: dashcore.Networks.testnet
+          network: pacglobal.Networks.testnet
         }
       });
 
@@ -130,11 +130,11 @@ describe('P2P Functionality', function() {
                         throw err;
                       }
                       utxo.privateKeyWIF = privresponse.result;
-                      var tx = dashcore.Transaction();
+                      var tx = pacglobal.Transaction();
                       tx.from(utxo);
                       tx.change(privateKey.toAddress());
                       tx.to(destKey.toAddress(), utxo.amount * 1e8 - 1000);
-                      tx.sign(dashcore.PrivateKey.fromWIF(utxo.privateKeyWIF));
+                      tx.sign(pacglobal.PrivateKey.fromWIF(utxo.privateKeyWIF));
                       txs.push(tx);
                       finished();
                     });
